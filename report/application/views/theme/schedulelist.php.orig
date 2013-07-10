@@ -1,0 +1,149 @@
+<?php
+/* 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+include_once 'header.php';
+include_once 'navigation.php';
+?>
+
+<div class="block small right">
+
+    <div class="block_head">
+        <div class="bheadl"></div>
+        <div class="bheadr"></div>
+
+        <h2><?php echo $pagetitle;?></h2>
+
+        <ul>
+            <li><a href="<?php echo $baseurl?>schedule/add">+ Add New</a></li>
+        </ul>
+    </div>		<!-- .block_head ends -->
+
+    <div class="block_content">
+        <div class="filter">
+            <select name="category" id="category">
+                <option value="">Select Category</option>
+                <?php foreach ($categoryList as $category):?>
+                <option value="<?php echo $category['id'];?>" <?php echo ($category['id'] == $filterBycategory) ? 'selected': '';?>><?php echo $category['title'];?></option>
+                <?php endforeach;?>
+            </select>&nbsp;&nbsp;
+            <select name="location" id="location">
+                <option value="">Select Location</option>
+                <?php foreach ($locationList as $location):?>
+                <option value="<?php echo $location['id'];?>" <?php echo ($location['id'] == $filterBylocation) ? 'selected': '';?>><?php echo $location['address'];?></option>
+                <?php endforeach;?>
+            </select>
+        </div><br/><br/>
+        <form method="post" action="">
+            <div class="tableactions pull-left">
+                <select name="categoryfilter" style="float: left;width: 180px;">
+                    <option>Filter by Category</option>
+                    <?php if(isset($categoryList) && count($categoryList) > 0) :
+                    foreach($categoryList as $val) :
+                        ?>
+                        <option value="<?php echo $val['id'];?>"><?php echo $val['title'];?></option>
+                        <?php endforeach; endif;?>
+                </select>
+                <select name="clientfilter" style="float: left;width: 180px;">
+                    <option>Filter by Client</option>
+                    <?php if(isset($clientList) && count($clientList) > 0) :
+                        foreach($clientList as $val) :
+                        ?>
+                    <option value="<?php echo $val['id'];?>"><?php echo $val['name'];?></option>
+                    <?php endforeach; endif;?>
+                </select>
+                <select name="salemanfilter"  style="float: left;width: 180px;">
+                    <option>Filter by Salesman</option>
+                    <?php if(isset($salesManList) && count($salesManList) > 0) :
+                    foreach($salesManList as $val) :
+                        ?>
+                        <option value="<?php echo $val['id'];?>"><?php echo $val['name'];?></option>
+                        <?php endforeach; endif;?>
+                </select>
+<!--                <select name="clientfilter" style="float: left">-->
+<!--                    <option>Filter By Location</option>-->
+<!--                    --><?php //if(isset($scheduleList) && count($scheduleList) > 0) :
+//                    foreach($scheduleList as $val) :
+//                        ?>
+<!--                        <option value="--><?php //echo $val['location_name'];?><!--">--><?php //echo $val['location_name'];?><!--</option>-->
+<!--                        --><?php //endforeach; endif;?>
+<!--                </select>-->
+            </div>
+            <input type="submit" name="submit" value="Filter" />
+
+            <br />
+            <table width="100%" cellspacing="0" cellpadding="0">
+
+                <tbody><tr>
+                    <th width="300">Client Name</th>
+                    <th width="93">Salesman Name</th>
+                    <th width="100">Location</th>
+                    <td width="97">&nbsp;</td>
+                </tr>
+                <?php if(isset($scheduleList) && count($scheduleList) > 0) :
+                    foreach($scheduleList as $val) :
+                ?>
+                <tr style="background-color: rgb(251, 251, 251);">
+                    <td><a href="#"><?php echo $val['client_name'];?></a></td>
+                    <td><?php echo $val['salesman_name'];?></td>
+                    <td><?php echo $val['address'];?></td>
+                    <td class="delete"><a href="<?php echo $baseurl.'schedule/edit/'.$val['id'];?>">Edit</a> | <a onclick="return confirm('Are you sure to delete this?')" href="<?php echo $baseurl.'schedule/delete/'.$val['id'];?>">Delete</a></td>
+                </tr>
+                <?php endforeach; else :?>
+                <tr style="background-color: rgb(251, 251, 251);">
+                    <td colspan="4" > No client schedule added yet</td>
+                </tr>
+                    <? endif;?>
+                </tbody></table>
+
+
+
+            <div class="paggination right">
+                <?php echo $this->pagination->create_links();?>
+
+            </div>		<!-- .paggination ends -->
+
+            <p class="pull-right"><a href="<?php echo $baseurl.'schedule/export?category='.$filterBycategory.'&location='.$filterBylocation;?>" >Export As CSV</a></p>
+
+        </form>
+
+    </div>
+    <!-- .block_content ends -->
+
+    <div class="bendl"></div>
+    <div class="bendr"></div>
+
+</div>
+<?
+//include_once 'semifooter.php';
+//include_once 'footer.php';
+
+?>
+<style>
+    p.pull-right
+    {
+        text-align: right;
+        clear: both;
+        padding-top: 20px;
+    }
+</style>
+
+<script type="text/javascript">
+$('select[name="category"]').change(function() { 
+            var categoryId = $("#category").val();
+            var locationId = $("#location").val();
+            var url = '<?php echo $baseurl.'schedule?category='; ?>'+ categoryId+'&location='+locationId;
+            
+            window.location = url;
+         });
+$('select[name="location"]').change(function() { 
+            var categoryId = $("#category").val();
+            var locationId = $("#location").val();
+            var url = '<?php echo $baseurl.'schedule?category='; ?>'+ categoryId+'&location='+locationId;
+            
+            window.location = url;
+         });
+
+</script>

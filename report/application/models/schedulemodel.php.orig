@@ -1,0 +1,63 @@
+<?php
+/**
+ * Name: Scheule Model
+ *
+ * Author: Emran Ul Hadi
+ *         emran@wneeds.com
+ *
+ * Schedule Model do all database staff related to Schedule.
+ *
+ */
+class schedulemodel extends CI_Model {
+
+    function __construct() {
+        parent::__construct();
+    }
+    function getAll($limit = null, $offset  = 0, $category = NULL, $location = NULL) {
+        $this->db->select('scheduled_visits.id, clients.name as  client_name, users.name as salesman_name, locations.address');
+        $this->db->from('scheduled_visits');
+        $this->db->join('clients', 'clients.id = scheduled_visits.client_id', 'left');
+        $this->db->join('users', 'users.id = scheduled_visits.salesman_id', 'left');
+        $this->db->join('locations', 'locations.id = scheduled_visits.location_id', 'left');
+        //$this->db->where('feed.categoryID', $categoryID);
+        if($category){
+            $this->db->where('clients.market_niche_id', $category);
+        }
+        if($location){
+            $this->db->where('locations.id', $location);
+        }
+        if($limit) {
+            $query = $this->db->limit($limit, $offset);
+        }
+
+
+         return $this->db->get()->result_array();
+        //print_r($this->db->last_query());die;
+    }
+    function getTotalCount() {
+        $this->db->select('count(scheduled_visits.id) as count');
+        $this->db->from('scheduled_visits');
+        $this->db->join('clients', 'clients.id = scheduled_visits.client_id', 'left');
+        $this->db->join('users', 'users.id = scheduled_visits.salesman_id', 'left');
+        $this->db->join('locations', 'locations.id = scheduled_visits.location_id', 'left');
+
+        $query = $this->db->get()->result_array();
+
+        if(count($query) > 0) {
+            return $query[0]['count'];
+        } else {
+            return 0;
+        }
+    }
+    function getById($id)
+    {
+        $this->db->select();
+        $this->db->from('scheduled_visits');
+        $this->db->where( 'id' , $id);
+        return $this->db->get()->result_array();
+    }
+    function delete($id)
+    {
+        $this->db->delete("scheduled_visits",array("id"=>$id));
+    }
+}
